@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sales AE Pro — the agent constellation for enterprise AEs</title>
+  <meta name="description" content="Seven agents that handle the AE workflow you'd do if you had three more hours every day. Drafts, never autosent. Built on Claude Code." />
+  <meta property="og:title" content="Sales AE Pro — the agent constellation for enterprise AEs" />
+  <meta property="og:description" content="Seven agents. One AE. Drafts only — you review, you send." />
+  <meta property="og:type" content="website" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: #03050d;
+      color: #e2e8f0;
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+      font-size: 17px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 0%, rgba(251, 191, 36, 0.06), transparent 50%),
+        radial-gradient(ellipse at 90% 80%, rgba(96, 165, 250, 0.05), transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+    }
+    a { color: #fbbf24; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    h1, h2, h3 { letter-spacing: -0.02em; font-weight: 600; }
+    h1 { font-size: clamp(2.4rem, 5.5vw, 3.8rem); line-height: 1.05; margin: 0 0 20px; }
+    h2 { font-size: clamp(1.8rem, 3.5vw, 2.4rem); line-height: 1.15; margin: 0 0 16px; }
+    h3 { font-size: 1.1rem; margin: 0; letter-spacing: -0.01em; }
+    p { margin: 0 0 16px; }
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+    .muted { color: #94a3b8; }
+
+    /* nav */
+    .nav { padding: 22px 0; border-bottom: 1px solid rgba(148, 163, 184, 0.08); position: sticky; top: 0; background: rgba(3, 5, 13, 0.7); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); z-index: 50; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; }
+    .brand { font-weight: 600; font-size: 1rem; letter-spacing: 0.01em; display: flex; align-items: center; gap: 10px; }
+    .brand-mark { width: 8px; height: 8px; border-radius: 50%; background: #fbbf24; box-shadow: 0 0 12px rgba(251, 191, 36, 0.6); }
+    .nav-links { display: flex; gap: 26px; font-size: 0.95rem; }
+    .nav-links a { color: #cbd5e1; }
+    .nav-links a:hover { color: #fbbf24; text-decoration: none; }
+
+    /* hero */
+    .hero { padding: 84px 0 56px; text-align: center; }
+    .hero-tag { display: inline-block; padding: 5px 14px; border: 1px solid rgba(251, 191, 36, 0.3); background: rgba(251, 191, 36, 0.06); color: #fbbf24; border-radius: 999px; font-size: 0.78rem; margin-bottom: 28px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+    .hero h1 .accent { background: linear-gradient(180deg, #fbbf24, #d97706); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p.lead { max-width: 640px; margin: 0 auto 36px; color: #cbd5e1; font-size: 1.18rem; line-height: 1.55; }
+    .cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 56px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 26px; border-radius: 999px; font-weight: 600; font-size: 0.98rem; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s, color 0.15s; text-decoration: none !important; border: 0; }
+    .btn-primary { background: linear-gradient(180deg, #fbbf24, #d97706); color: #0a0f1f; box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.4), 0 8px 32px rgba(251, 191, 36, 0.25); }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.6), 0 12px 40px rgba(251, 191, 36, 0.4); }
+    .btn-secondary { background: transparent; color: #e2e8f0; border: 1px solid rgba(148, 163, 184, 0.3); }
+    .btn-secondary:hover { border-color: rgba(251, 191, 36, 0.5); color: #fbbf24; }
+
+    /* hero animation embed */
+    .hero-frame { position: relative; max-width: 1120px; margin: 0 auto; aspect-ratio: 16/9; border-radius: 18px; overflow: hidden; border: 1px solid rgba(251, 191, 36, 0.18); box-shadow: 0 0 100px rgba(251, 191, 36, 0.08), 0 28px 56px rgba(0, 0, 0, 0.6); background: #03050d; }
+    .hero-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .hero-frame::after { content: "interactive · click to play"; position: absolute; bottom: 14px; right: 14px; padding: 6px 12px; background: rgba(3, 5, 13, 0.85); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 999px; font-size: 0.75rem; color: #cbd5e1; letter-spacing: 0.04em; pointer-events: none; backdrop-filter: blur(8px); }
+
+    /* sections */
+    section { padding: 96px 0; }
+    section.tight { padding: 64px 0; }
+    .section-tag { display: inline-block; color: #fbbf24; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 14px; font-weight: 500; }
+
+    /* how it works */
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 36px; }
+    .step { padding: 28px; background: linear-gradient(180deg, rgba(10, 15, 31, 0.7), rgba(10, 15, 31, 0.3)); border: 1px solid rgba(148, 163, 184, 0.12); border-radius: 14px; }
+    .step-num { color: #fbbf24; font-weight: 600; font-size: 0.78rem; letter-spacing: 0.12em; margin-bottom: 10px; }
+    .step h3 { margin-bottom: 8px; }
+
+    /* agents grid */
+    .agents { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 36px; }
+    .agent-card { padding: 26px; background: linear-gradient(180deg, rgba(10, 15, 31, 0.7), rgba(10, 15, 31, 0.3)); border: 1px solid rgba(148, 163, 184, 0.12); border-radius: 14px; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s; }
+    .agent-card:hover { border-color: var(--dot, rgba(251, 191, 36, 0.4)); transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4); }
+    .agent-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .agent-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--dot, #fbbf24); box-shadow: 0 0 14px var(--dot, #fbbf24); flex-shrink: 0; }
+    .agent-card p { margin: 0 0 12px; color: #cbd5e1; font-size: 0.97rem; }
+    .agent-trigger { color: #94a3b8; font-size: 0.82rem; margin: 10px 0 12px; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+    .agent-tools { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip { padding: 3px 10px; background: rgba(148, 163, 184, 0.08); border: 1px solid rgba(148, 163, 184, 0.16); border-radius: 999px; font-size: 0.74rem; color: #cbd5e1; }
+
+    /* why */
+    .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 36px; }
+    .why { padding: 28px; }
+    .why h3 { color: #fbbf24; margin-bottom: 10px; font-size: 1rem; letter-spacing: 0.04em; }
+    .why p { color: #cbd5e1; margin: 0; }
+
+    /* CTA */
+    .cta-block { text-align: center; padding: 72px 28px; background: linear-gradient(180deg, rgba(251, 191, 36, 0.04), rgba(10, 15, 31, 0.4)); border: 1px solid rgba(251, 191, 36, 0.18); border-radius: 18px; }
+    .cta-block h2 { margin-bottom: 14px; }
+    .cta-block p { max-width: 580px; margin: 0 auto 32px; color: #cbd5e1; }
+
+    /* footer */
+    footer { padding: 44px 0; border-top: 1px solid rgba(148, 163, 184, 0.08); color: #94a3b8; font-size: 0.88rem; }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .footer-links a { margin-left: 18px; color: #94a3b8; }
+    .footer-links a:hover { color: #fbbf24; text-decoration: none; }
+
+    @media (max-width: 760px) {
+      .steps, .agents, .why-grid { grid-template-columns: 1fr; }
+      .hero { padding: 52px 0 40px; }
+      section { padding: 64px 0; }
+      .nav-links a:not(.nav-cta) { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <div class="brand"><span class="brand-mark"></span> Sales AE Pro</div>
+      <div class="nav-links">
+        <a href="#how">How it works</a>
+        <a href="#agents">Agents</a>
+        <a href="https://github.com/beckwith930-star/sales-ae-pro-plugin" target="_blank" rel="noopener">GitHub →</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="container">
+      <div class="hero-tag">Built on Claude Code</div>
+      <h1>The agent constellation<br>for enterprise <span class="accent">AEs</span>.</h1>
+      <p class="lead">Seven agents that handle the workflow you'd do if you had three more hours every day. They draft. You review. Nothing sends without you.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://calendar.app.google/mLTnDpPGmp9e4sou5" target="_blank" rel="noopener">Book a 30-min call →</a>
+        <a class="btn btn-secondary" href="demo/agent_command_center.html">Watch a live run</a>
+      </div>
+      <div class="hero-frame">
+        <iframe src="demo/agent_command_center.html" title="Agent constellation live demo" loading="eager"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="container">
+      <div class="section-tag">How it works</div>
+      <h2>Trigger. Fan out. Draft. You send.</h2>
+      <p class="muted" style="max-width: 640px;">Every agent runs on the same loop. The shape is boring on purpose — you can read every prompt, every tool call, every artifact.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01 · Trigger</div>
+          <h3>Schedule, signal, or call</h3>
+          <p class="muted">Cron schedules (07:00 daily, Friday afternoon), upstream signals (a fresh earnings filing, a new job posting at a target account), or a manual run.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">02 · Fan out</div>
+          <h3>Across your stack</h3>
+          <p class="muted">Salesforce. Gmail. Slack. LinkedIn. Web search and SEC EDGAR. Each agent uses only the tools it needs, in parallel where it can.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">03 · Draft</div>
+          <h3>You hit send</h3>
+          <p class="muted">Every outbound artifact is a Gmail Draft, a Slack draft, or a queued LinkedIn invite. No autosent emails, no autoposted DMs. The human pulls every send trigger.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="agents">
+    <div class="container">
+      <div class="section-tag">Seven agents</div>
+      <h2>The constellation.</h2>
+      <p class="muted" style="max-width: 640px;">Each agent owns one ritual. Together they cover the AE week from Monday morning through Sunday evening.</p>
+      <div class="agents">
+
+        <article class="agent-card" style="--dot: #fbbf24;">
+          <div class="agent-header">
+            <span class="agent-dot"></span>
+            <h3>Daily Signal Monitor</h3>
+          </div>
+          <p>Scans news, SEC filings, LinkedIn job postings, saved-contact social, and earnings transcripts for buying signals tied to your priority accounts. Scores each signal, dedupes against the last 7 days, and drafts personalized outreach for high-scoring hits.</p>
+          <div class="agent-trigger">trigger · Mon–Fri 07:00 local</div>
+          <div class="agent-tools">
+            <span class="chip">Salesforce</span>
+            <span class="chip">SEC EDGAR</span>
+            <span class="chip">LinkedIn</span>
+            <span class="chip">Gmail</span>
+            <span class="chip">Web</span>
+          </div>
+        </article>
+
+        <article class="agent-card" style="--dot: #60a5fa;">
+          <div class="agent-header">
+            <span class="agent-dot"></span>
+            <h3>Friday Pipeline Update</h3>
+          </div>
+          <p>Pulls every open opportunity, scans Gmail and Slack for the week's activity per account, drafts a Next Step proposal for each, and — after you approve — writes the updates back to Salesforce plus a weekly markdown summary.</p>
+          <div class="agent-trigger">trigger · Friday 15:00 local</div>
+          <div class="agent-tools">
+            <span class="chip">Salesforce</span>
+            <span class="chip">Gmail</span>
+            <span class="chip">Slack</span>
+          </div>
+        </article>
+
+        <article class="agent-card" style="--dot: #a78bfa;">
+          <div class="agent-header">
+            <span class="agent-dot"></span>
+            <h3>Sunday 1:1 Update</h3>
+          </div>
+          <p>Assembles a one-page 1:1 prep doc for your manager — open opportunities, week's email and Slack activity per account, account sections drafted in your voice. Pinned to the top of your shared 1:1 doc by Monday morning.</p>
+          <div class="agent-trigger">trigger · Sunday 19:00 local</div>
+          <div class="agent-tools">
+            <span class="chip">Salesforce</span>
+            <span class="chip">Gmail</span>
+            <span class="chip">Slack</span>
+            <span class="chip">Google Docs</span>
+          </div>
+        </article>
+
+        <article class="agent-card" style="--dot: #22d3ee;">
+          <div class="agent-header">
+            <span class="agent-dot"></span>
+            <h3>Post-Call Processor</h3>
+          </div>
+          <p>On meeting end: takes the call transcript, finds the matching Account, runs LeadConvert + Opp creation in Salesforce, drafts the recap email + pricing follow-up, and posts a notes summary to your discovery Slack channel.</p>
+          <div class="agent-trigger">trigger · meeting webhook</div>
+          <div class="agent-tools">
+            <span class="chip">Salesforce</span>
+            <span class="chip">Gmail</span>
+            <span class="chip">Slack</span>
+          </div>
+        </article>
+
+        <article class="agent-card" style="--dot: #34d399;">
+          <div class="agent-header">
+            <span class="agent-dot"></span>
+            <h3>Email Outreach</h3>
+          </div>
+          <p>On signal trigger: enriches the lead, maps the pain to a public signal, drafts a high-context outbound email with PDF attachment and your signature, and logs the activity as a Salesforce task. Sits in your Gmail Drafts folder until you press send.</p>
+          <div class="agent-trigger">trigger · signal score &gt; 40</div>
+          <div class="agent-tools">
+            <span class="chip">Salesforce</span>
+            <span class="chip">Gmail</span>
+            <span class="chip">Web</span>
+          </div>
+        </article>
+
+        <article class="agent-card" style="--dot: #38bdf8;">
+          <div class="agent-header">
+            <span class="agent-dot"></span>
+            <h3>LinkedIn DMs</h3>
+          </div>
+          <p>On signal trigger: searches LinkedIn for the lead, opens the profile in Chrome, drafts a connection request with a 195/300-char invite note grounded in the signal, and logs a pending_acceptance task in Salesforce. Sales Navigator only — no scraping.</p>
+          <div class="agent-trigger">trigger · signal score &gt; 40</div>
+          <div class="agent-tools">
+            <span class="chip">LinkedIn</span>
+            <span class="chip">Chrome</span>
+            <span class="chip">Salesforce</span>
+          </div>
+        </article>
+
+        <article class="agent-card" style="--dot: #f472b6;">
+          <div class="agent-header">
+            <span class="agent-dot"></span>
+            <h3>Prospect Intel</h3>
+          </div>
+          <p>On demand or weekly: deep research on a prospect — multi-query web search, LinkedIn profile and tenure, latest 10-K turnaround read. Attaches a one-page brief to the Account in Salesforce and appends to your research_briefs Google Doc.</p>
+          <div class="agent-trigger">trigger · manual or weekly</div>
+          <div class="agent-tools">
+            <span class="chip">Web</span>
+            <span class="chip">LinkedIn</span>
+            <span class="chip">Salesforce</span>
+            <span class="chip">Google Docs</span>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="tight">
+    <div class="container">
+      <div class="section-tag">Why this works</div>
+      <h2>Three rules. Held everywhere.</h2>
+      <div class="why-grid">
+        <div class="why">
+          <h3>Drafts only</h3>
+          <p>Every email, every DM, every Salesforce write goes through human approval. Nothing is autosent — by design, not by oversight.</p>
+        </div>
+        <div class="why">
+          <h3>Source-cited</h3>
+          <p>Every signal cites a verifiable URL. Every recap cites a meeting. No hallucinated job postings, no invented earnings quotes.</p>
+        </div>
+        <div class="why">
+          <h3>Inspectable</h3>
+          <p>Every prompt, tool call, and artifact is logged. The dashboard shows the whole run live. You can read your way through any decision.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="cta-block">
+        <div class="section-tag">Get a demo</div>
+        <h2>Show me your pipeline.<br>I'll show you yours running.</h2>
+        <p>30 minutes. Bring one account you're working. We'll wire up Signal Monitor against your Salesforce sandbox and you'll see drafts in your Gmail Drafts folder before we hang up.</p>
+        <div class="cta-row" style="margin-bottom: 0;">
+          <a class="btn btn-primary" href="https://calendar.app.google/mLTnDpPGmp9e4sou5" target="_blank" rel="noopener">Book a 30-min call →</a>
+          <a class="btn btn-secondary" href="https://github.com/beckwith930-star/sales-ae-pro-plugin" target="_blank" rel="noopener">See on GitHub</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container footer-inner">
+      <div>Sales AE Pro · built by an AE</div>
+      <div class="footer-links">
+        <a href="https://github.com/beckwith930-star/sales-ae-pro-plugin" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://calendar.app.google/mLTnDpPGmp9e4sou5" target="_blank" rel="noopener">Book a call</a>
+        <a href="demo/agent_command_center.html">Live demo</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+
+# Replay output (generated when running locally; not part of the site)
+signal_reports/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Editor + tooling
+*.bak
+*.swp
+.vscode/
+.idea/
+
+# Environment
+.env
+.env.local
