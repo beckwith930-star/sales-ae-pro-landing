@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Agent Constellation 3D · Brandon's Garage</title>
+<title>Sales AE Pro · Agent Constellation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -288,11 +288,15 @@
     </div>
   </div>
 
-  <!-- bottom-right stats -->
-  <div class="pane glass absolute bottom-4 right-4 px-4 py-3 flex items-center gap-5 text-[11px] font-mono">
-    <div><span class="text-slate-400">runs </span><span class="text-emerald-300 font-semibold" data-bind="statRuns">0</span></div>
-    <div><span class="text-slate-400">beams </span><span class="text-cyan-300 font-semibold" data-bind="statBeams">0</span></div>
-    <div><span class="text-slate-400">active </span><span class="text-amber-300 font-semibold" data-bind="statActive">0</span></div>
+  <!-- bottom-right outputs (this morning) -->
+  <div class="pane glass absolute bottom-4 right-4 px-5 py-3 flex flex-col gap-1.5 text-[11px] font-mono min-w-[260px]">
+    <div class="text-slate-400 uppercase tracking-[0.14em] text-[9px] mb-0.5">this morning</div>
+    <div class="grid grid-cols-2 gap-x-5 gap-y-1.5">
+      <div class="flex items-baseline gap-1.5"><span class="text-amber-300 font-semibold text-[14px] tabular-nums" data-bind="outDrafts">0</span><span class="text-slate-400 text-[10px]">drafts ready</span></div>
+      <div class="flex items-baseline gap-1.5"><span class="text-cyan-300 font-semibold text-[14px] tabular-nums" data-bind="outRecords">0</span><span class="text-slate-400 text-[10px]">records updated</span></div>
+      <div class="flex items-baseline gap-1.5"><span class="text-emerald-300 font-semibold text-[14px] tabular-nums" data-bind="outOnes">0</span><span class="text-slate-400 text-[10px]">1:1s prepped</span></div>
+      <div class="flex items-baseline gap-1.5"><span class="text-purple-300 font-semibold text-[14px] tabular-nums" data-bind="outInvites">0</span><span class="text-slate-400 text-[10px]">invites drafted</span></div>
+    </div>
   </div>
 </template>
 
@@ -312,12 +316,23 @@ import { OutputPass }      from 'three/addons/postprocessing/OutputPass.js';
 const AGENTS = [
   { id: 'signal',   name: 'Daily Signal Monitor', short: 'Signal',   cadence: 'Mon–Fri 07:00 PT', hue: 38,  desc: 'News + SEC + LinkedIn jobs scan · score · draft · daily report' },
   { id: 'friday',   name: 'Friday Pipeline',      short: 'Friday',   cadence: 'Fri 12:00 PT',     hue: 268, desc: 'Pull every open opp · scan Gmail+Slack · propose Next Step · push SF' },
-  { id: 'sunday',   name: 'Sunday 1:1 Update',    short: 'Sunday',   cadence: 'Sun 21:00 PT',     hue: 320, desc: 'Pull active opps · compose 1:1 update · post to Chris doc' },
+  { id: 'sunday',   name: 'Sunday 1:1 Update',    short: 'Sunday',   cadence: 'Sun 21:00 PT',     hue: 320, desc: 'Pull active opps · compose 1:1 update · post to shared 1:1 doc' },
   { id: 'postcall', name: 'Post-Call Processor',  short: 'Post-Call',cadence: 'On-trigger',       hue: 195, desc: 'Gemini Notes → Salesforce → Slack → Gmail Draft' },
   { id: 'email',    name: 'Email Outreach',       short: 'Email',    cadence: 'Continuous',       hue: 145, desc: 'Per-account research → personalized hook → Gmail draft (gated)' },
   { id: 'linkedin', name: 'LinkedIn DMs',         short: 'LinkedIn', cadence: 'Continuous',       hue: 215, desc: 'Search profile → match → personalized invite → SF Task log' },
   { id: 'intel',    name: 'Prospect Intel',       short: 'Intel',    cadence: 'Continuous',       hue: 165, desc: 'Multi-source research · pain hooks · brief pinned to Lead' },
 ];
+
+// What each agent produces per completed run — drives the "this morning" outputs counters
+const PRODUCES = {
+  signal:   { drafts: 4, records: 3 },
+  friday:   { records: 7 },
+  sunday:   { ones: 1 },
+  postcall: { drafts: 1, records: 2 },
+  email:    { drafts: 1, records: 1 },
+  linkedin: { invites: 1, records: 1 },
+  intel:    { records: 1 },
+};
 
 // Full-color brand logos from Wikimedia Commons. Stable, no rate limiting.
 const PLANET_ICON_URL = {
@@ -384,7 +399,7 @@ const FLOWS = {
     { tool:'gmail',      text:'gmail.search · 31 hits this week', ms: 1100 },
     { tool:'slack',      text:'slack.history · 18 #discovery messages', ms: 900 },
     { text:'llm.synthesize · 7 account sections drafted', ms: 1300 },
-    { text:'awaiting approval ... approved (Brandon edits applied)', ms: 1700 },
+    { text:'awaiting approval ... approved with inline edits', ms: 1700 },
     { tool:'chrome',     text:'docs.insert · pinned at top of 1:1 doc', ms: 1200 },
     { text:'Run complete · 8.4s', ms: 400 },
   ],
@@ -537,7 +552,7 @@ document.body.appendChild(labelRenderer.domElement);
 // Bloom composer
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
-const bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.1, 0.55, 0.18);
+const bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.25, 0.55, 0.18);
 composer.addPass(bloom);
 composer.addPass(new OutputPass());
 
@@ -653,7 +668,7 @@ function makeNebula() {
 }
 scene.add(makeNebula());
 
-/* ---------- Central Hub (Brandon's Garage) ---------- */
+/* ---------- Central Hub ---------- */
 const hub = new THREE.Group();
 scene.add(hub);
 
@@ -934,6 +949,7 @@ let state = {
   selectedId: 'signal',
   running: new Map(),     // agentId -> { stepIdx, nextStepAt, runId }
   stats: { runs: 0, beams: 0, active: 0 },
+  outputs: { drafts: 0, records: 0, ones: 0, invites: 0 },
   audioOn: true,
   volume: 0.4,
 };
@@ -951,9 +967,10 @@ function setHUD() {
   hudBind('agentCadence').textContent = sel.cadence;
   hudBind('agentDot').style.background = `hsl(${sel.hue}, 90%, 60%)`;
   hudBind('agentDot').style.boxShadow = `0 0 12px hsla(${sel.hue}, 90%, 60%, 0.7)`;
-  hudBind('statRuns').textContent = state.stats.runs;
-  hudBind('statBeams').textContent = state.stats.beams;
-  hudBind('statActive').textContent = state.running.size;
+  hudBind('outDrafts').textContent  = state.outputs.drafts;
+  hudBind('outRecords').textContent = state.outputs.records;
+  hudBind('outOnes').textContent    = state.outputs.ones;
+  hudBind('outInvites').textContent = state.outputs.invites;
   // active highlight on labels
   agentObjects.forEach(a => {
     if (a.id === state.selectedId) a.label.classList.add('active'); else a.label.classList.remove('active');
@@ -1110,9 +1127,19 @@ function tickAgents(now) {
     const step = flow[run.stepIdx];
     if (!step) {
       state.running.delete(agentId);
-      if (state.running.size === 0) audio.stopDrone();
+      if (state.running.size === 0) {
+        audio.stopDrone();
+        lastRunEndT = now;
+      }
       audio.chime();
       const a = AGENTS.find(x => x.id === agentId);
+      // Tick the "this morning" outputs based on what this agent produces
+      const produced = PRODUCES[agentId];
+      if (produced) {
+        for (const [k, v] of Object.entries(produced)) {
+          state.outputs[k] = (state.outputs[k] || 0) + v;
+        }
+      }
       appendLine(`<span class="text-emerald-300">✓</span> <span class="text-slate-400">[${new Date().toTimeString().slice(0,8)}]</span> <span class="text-amber-300">${a.short}</span> complete`);
       setHUD();
       continue;
@@ -1131,6 +1158,74 @@ function tickAgents(now) {
     run.nextStepAt = now + step.ms;
   }
   setHUD();
+}
+
+/* =========================================================================
+   CINEMATIC INTRO · AUTO-CYCLE · IDLE DRIFT
+   ========================================================================= */
+
+const INTRO_FROM               = new THREE.Vector3(80, 90, 280);
+const INTRO_DURATION_MS        = 2400;
+const IDLE_BEFORE_AUTOCYCLE_MS = 4500;
+const IDLE_BEFORE_DRIFT_MS     = 5500;
+const CALM_BETWEEN_CYCLES_MS   = 3500;
+const AUTO_CYCLE_QUEUE         = ['signal', 'friday', 'sunday', 'postcall'];
+
+let lastInteractionT  = performance.now();
+let lastRunEndT       = -Infinity;
+let userHasInteracted = false;
+let autoCycleIdx      = 0;
+let introDone         = false;
+let introStartT       = 0;
+
+// Start the camera close-in for the cinematic reveal
+camera.position.copy(INTRO_FROM);
+camera.lookAt(0, 0, 0);
+controls.enabled = false;
+controls.autoRotateSpeed = 0.35;
+
+function runIntro(t) {
+  if (!introStartT) introStartT = t;
+  const k = Math.min(1, (t - introStartT) / INTRO_DURATION_MS);
+  const e = 1 - Math.pow(1 - k, 3); // easeOutCubic
+  camera.position.lerpVectors(INTRO_FROM, CAM_DEFAULT, e);
+  camera.lookAt(0, 0, 0);
+  if (k >= 1 || userHasInteracted) {
+    introDone = true;
+    if (userHasInteracted) camera.position.copy(CAM_DEFAULT);
+    controls.enabled = true;
+    lastInteractionT = performance.now(); // start the post-intro idle clock
+  }
+}
+
+function noteInteraction() {
+  lastInteractionT = performance.now();
+  userHasInteracted = true;
+  controls.autoRotate = false;
+}
+['pointerdown', 'wheel', 'touchstart', 'keydown'].forEach(ev => {
+  renderer.domElement.addEventListener(ev, noteInteraction, { passive: true });
+});
+hud.addEventListener('pointerdown', noteInteraction, { passive: true });
+
+function maybeStartAutoCycle(t) {
+  if (!introDone) return;
+  if (state.running.size > 0) return;
+  if (window.__liveActive && window.__liveActive.size > 0) return;
+  if (t - lastInteractionT < IDLE_BEFORE_AUTOCYCLE_MS) return;
+  if (t - lastRunEndT      < CALM_BETWEEN_CYCLES_MS)   return;
+
+  const id = AUTO_CYCLE_QUEUE[autoCycleIdx % AUTO_CYCLE_QUEUE.length];
+  autoCycleIdx++;
+  state.selectedId = id;
+  setHUD();
+  activate(id);
+}
+
+function maybeIdleDrift(t) {
+  if (!introDone) return;
+  const idle = (t - lastInteractionT > IDLE_BEFORE_DRIFT_MS);
+  if (controls.autoRotate !== idle) controls.autoRotate = idle;
 }
 
 /* =========================================================================
@@ -1190,6 +1285,11 @@ function loop() {
 
   // step agent timelines
   tickAgents(t);
+
+  // intro · auto-cycle · idle drift
+  if (!introDone) runIntro(t);
+  maybeIdleDrift(t);
+  maybeStartAutoCycle(t);
 
   controls.update();
   composer.render();
