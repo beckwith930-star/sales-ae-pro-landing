@@ -124,6 +124,64 @@
     user-select: none;
     -webkit-user-drag: none;
   }
+  /* Agent orb labels carrying an inline SVG glyph (signal, friday, sunday, postcall, intel) */
+  .label3d.agent-glyph-label {
+    padding: 7px;
+    border-radius: 12px;
+    background: rgba(8, 12, 22, 0.55);
+    border: 1px solid rgba(148,163,184,0.16);
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    color: var(--glow);
+  }
+  .label3d.agent-glyph-label svg {
+    display: block;
+    width: 22px; height: 22px;
+    stroke: currentColor;
+    fill: none;
+    filter: drop-shadow(0 0 8px var(--glow));
+    user-select: none;
+  }
+  .label3d.agent-glyph-label.active { color: #fff; }
+  .label3d.agent-glyph-label.active svg { filter: drop-shadow(0 0 12px var(--glow)) drop-shadow(0 0 22px var(--glow)); }
+
+  /* Artifact pop-tiles — appear when an agent completes, float up + fade */
+  .artifact-tile {
+    pointer-events: none;
+    user-select: none;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 11px 5px 8px;
+    border-radius: 999px;
+    background: rgba(8, 12, 22, 0.88);
+    border: 1px solid var(--tile-color, #fbbf24);
+    color: #fff;
+    font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    box-shadow: 0 0 22px var(--tile-glow, rgba(251,191,36,0.45)), inset 0 1px 0 rgba(255,255,255,0.08);
+    backdrop-filter: blur(8px);
+    transform: translate(-50%, -100%);
+    opacity: 0;
+    animation: artifact-tile-anim 2400ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  }
+  .artifact-tile svg {
+    width: 15px; height: 15px;
+    stroke: var(--tile-color, #fbbf24);
+    fill: none;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 6px var(--tile-color, #fbbf24));
+  }
+  .artifact-tile .tile-count {
+    color: var(--tile-color, #fbbf24);
+    font-size: 13px;
+  }
+  @keyframes artifact-tile-anim {
+    0%   { opacity: 0; transform: translate(-50%, -90%)  scale(0.75); }
+    18%  { opacity: 1; transform: translate(-50%, -150%) scale(1);    }
+    72%  { opacity: 1; transform: translate(-50%, -210%) scale(1);    }
+    100% { opacity: 0; transform: translate(-50%, -260%) scale(0.95); }
+  }
   .label3d:hover { transform: translate(-50%, -130%); }
   /* Hub label — Claude symbol embedded at the center of the sun, no chrome */
   .label3d.hub-label {
@@ -142,6 +200,13 @@
             drop-shadow(0 0 44px rgba(251,191,36,0.55));
     user-select: none;
     -webkit-user-drag: none;
+  }
+  /* Outputs HUD inline icons */
+  svg.output-icon {
+    width: 16px; height: 16px;
+    stroke: currentColor; fill: none;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 4px currentColor);
   }
 
   /* command flash — terminal window boxes that appear at random positions for 10s */
@@ -232,16 +297,10 @@
         <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/Claude_AI_symbol.svg" alt="Claude" style="width: 24px; height: 24px; filter: drop-shadow(0 0 6px rgba(251,191,36,0.55));" />
       </div>
       <div>
-        <div class="text-[15px] font-semibold tracking-tight">Agent Constellation <span class="text-slate-400">— 3D</span></div>
         <div class="text-[11px] text-slate-400 font-mono" data-bind="time">--:--:--</div>
       </div>
     </div>
     <div class="flex-1"></div>
-    <div class="hidden md:flex items-center gap-2 text-[11px] font-mono text-slate-400">
-      <span class="px-2 py-1 rounded-md bg-slate-800/60 border border-slate-700/50">drag · rotate</span>
-      <span class="px-2 py-1 rounded-md bg-slate-800/60 border border-slate-700/50">scroll · zoom</span>
-      <span class="px-2 py-1 rounded-md bg-slate-800/60 border border-slate-700/50">right-drag · pan</span>
-    </div>
     <button id="btn-activate-all" class="btn-glow btn-primary px-4 py-2 rounded-lg font-medium text-[13px]">▶ Activate all</button>
     <button id="btn-stop-all" class="btn-glow btn-ghost px-3 py-2 rounded-lg font-medium text-[13px]">Stop all</button>
     <button id="btn-reset" class="btn-glow btn-ghost px-3 py-2 rounded-lg font-medium text-[13px]" title="Reset camera">⟲ Camera</button>
@@ -288,14 +347,14 @@
     </div>
   </div>
 
-  <!-- bottom-right outputs (this morning) -->
-  <div class="pane glass absolute bottom-4 right-4 px-5 py-3 flex flex-col gap-1.5 text-[11px] font-mono min-w-[260px]">
-    <div class="text-slate-400 uppercase tracking-[0.14em] text-[9px] mb-0.5">this morning</div>
-    <div class="grid grid-cols-2 gap-x-5 gap-y-1.5">
-      <div class="flex items-baseline gap-1.5"><span class="text-amber-300 font-semibold text-[14px] tabular-nums" data-bind="outDrafts">0</span><span class="text-slate-400 text-[10px]">drafts ready</span></div>
-      <div class="flex items-baseline gap-1.5"><span class="text-cyan-300 font-semibold text-[14px] tabular-nums" data-bind="outRecords">0</span><span class="text-slate-400 text-[10px]">records updated</span></div>
-      <div class="flex items-baseline gap-1.5"><span class="text-emerald-300 font-semibold text-[14px] tabular-nums" data-bind="outOnes">0</span><span class="text-slate-400 text-[10px]">1:1s prepped</span></div>
-      <div class="flex items-baseline gap-1.5"><span class="text-purple-300 font-semibold text-[14px] tabular-nums" data-bind="outInvites">0</span><span class="text-slate-400 text-[10px]">invites drafted</span></div>
+  <!-- bottom-right outputs (this morning) — icon + count, hover for label -->
+  <div class="pane glass absolute bottom-4 right-4 px-4 py-3 flex flex-col gap-1.5 font-mono">
+    <div class="text-slate-400 uppercase tracking-[0.14em] text-[9px]">this morning</div>
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-1.5 text-amber-300"  title="drafts ready"><svg class="output-icon" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span class="font-semibold text-[16px] tabular-nums" data-bind="outDrafts">0</span></div>
+      <div class="flex items-center gap-1.5 text-cyan-300"   title="records updated"><svg class="output-icon" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5"/><path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3"/></svg><span class="font-semibold text-[16px] tabular-nums" data-bind="outRecords">0</span></div>
+      <div class="flex items-center gap-1.5 text-emerald-300" title="1:1s prepped"><svg class="output-icon" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2 21v-1a5 5 0 015-5h4a5 5 0 015 5v1"/><circle cx="17" cy="8" r="2.5"/><path d="M22 19v-1a4 4 0 00-3-3.85"/></svg><span class="font-semibold text-[16px] tabular-nums" data-bind="outOnes">0</span></div>
+      <div class="flex items-center gap-1.5 text-purple-300" title="invites drafted"><svg class="output-icon" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg><span class="font-semibold text-[16px] tabular-nums" data-bind="outInvites">0</span></div>
     </div>
   </div>
 </template>
@@ -348,6 +407,48 @@ const PLANET_ICON_URL = {
 const AGENT_ICON_URL = {
   email:    'https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg',
   linkedin: 'https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png',
+};
+// Inline SVG glyphs for agents that don't map to a single brand. Stroke uses currentColor.
+const AGENT_GLYPH_SVG = {
+  // Signal — broadcast / radar arcs
+  signal: `<svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="12" cy="14.5" r="1.6" fill="currentColor" stroke="none"/>
+    <path d="M8.5 14.5a3.5 3.5 0 017 0"/>
+    <path d="M5.5 14.5a6.5 6.5 0 0113 0"/>
+    <path d="M2.5 14.5a9.5 9.5 0 0119 0"/>
+  </svg>`,
+  // Friday — pipeline funnel
+  friday: `<svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M3 5h18l-7 9v6l-4-2v-4L3 5z"/>
+  </svg>`,
+  // Sunday — 1:1 chat bubble with text lines
+  sunday: `<svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M3 7a3 3 0 013-3h12a3 3 0 013 3v8a3 3 0 01-3 3h-7l-4 3v-3H6a3 3 0 01-3-3V7z"/>
+    <path d="M8 9.5h8M8 13h5"/>
+  </svg>`,
+  // Post-Call — phone-down with action arrows
+  postcall: `<svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M22 11.5a14 14 0 00-20 0l2.7 2.7a2 2 0 002.83 0l1.06-1.06a2 2 0 00.55-1.74l-.18-1.07a13 13 0 016.08 0l-.18 1.07a2 2 0 00.55 1.74l1.06 1.06a2 2 0 002.83 0L22 11.5z"/>
+  </svg>`,
+  // Intel — magnifying glass
+  intel: `<svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="11" cy="11" r="7"/>
+    <path d="M21 21l-4.35-4.35"/>
+  </svg>`,
+};
+// SVG glyphs for the four "this morning" output counters
+const ARTIFACT_GLYPH = {
+  drafts:  `<svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>`,
+  records: `<svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5"/><path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3"/></svg>`,
+  ones:    `<svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2 21v-1a5 5 0 015-5h4a5 5 0 015 5v1"/><circle cx="17" cy="8" r="2.5"/><path d="M22 19v-1a4 4 0 00-3-3.85"/></svg>`,
+  invites: `<svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>`,
+};
+// Each output kind's display color (matches the HUD counter color for cohesion)
+const ARTIFACT_COLOR = {
+  drafts:  { hex: '#fcd34d', glow: 'rgba(252, 211, 77, 0.55)' },  // amber-300
+  records: { hex: '#67e8f9', glow: 'rgba(103, 232, 249, 0.55)' }, // cyan-300
+  ones:    { hex: '#6ee7b7', glow: 'rgba(110, 231, 183, 0.55)' }, // emerald-300
+  invites: { hex: '#d8b4fe', glow: 'rgba(216, 180, 254, 0.55)' }, // purple-300
 };
 // Web · SEC has no single brand — inline globe SVG (data URI), tinted to the planet hue.
 const WEB_GLOBE_SVG = `<svg class="brand-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="hsl(85,80%,65%)" aria-hidden="true">
@@ -759,6 +860,7 @@ const agentObjects = AGENTS.map((a, i) => {
   div.dataset.agentId = a.id;
   div.title = a.name;
   if (AGENT_ICON_URL[a.id]) {
+    // Brand logo (Gmail, LinkedIn)
     div.classList.add('agent-icon-label');
     const img = document.createElement('img');
     img.className = 'brand-icon';
@@ -766,6 +868,10 @@ const agentObjects = AGENTS.map((a, i) => {
     img.alt = a.short;
     img.crossOrigin = 'anonymous';
     div.appendChild(img);
+  } else if (AGENT_GLYPH_SVG[a.id]) {
+    // Inline SVG glyph (signal, friday, sunday, postcall, intel)
+    div.classList.add('agent-glyph-label');
+    div.innerHTML = AGENT_GLYPH_SVG[a.id];
   } else {
     div.textContent = a.short;
   }
@@ -939,6 +1045,32 @@ const sparkPool = Array.from({ length: 60 }, () => new Spark());
 function fireSpark(pos, color) {
   const s = sparkPool.find(s => !s.active);
   if (s) s.fire(pos, color);
+}
+
+/* ---------- Artifact pop-tile (transient celebration on agent completion) ---------- */
+function popArtifact(agentId, kind, count, delayMs = 0) {
+  const ag = agentObjects.find(x => x.id === agentId);
+  if (!ag) return;
+  const glyph = ARTIFACT_GLYPH[kind];
+  const colorPair = ARTIFACT_COLOR[kind];
+  if (!glyph || !colorPair) return;
+
+  setTimeout(() => {
+    const div = document.createElement('div');
+    div.className = 'artifact-tile';
+    div.style.setProperty('--tile-color', colorPair.hex);
+    div.style.setProperty('--tile-glow',  colorPair.glow);
+    div.innerHTML = glyph + `<span class="tile-count">+${count}</span>`;
+
+    const obj = new CSS2DObject(div);
+    obj.position.set(0, 65, 0); // above the orb's existing label
+    ag.group.add(obj);
+
+    setTimeout(() => {
+      if (obj.parent) obj.parent.remove(obj);
+      div.remove();
+    }, 2450);
+  }, delayMs);
 }
 
 /* =========================================================================
@@ -1133,11 +1265,14 @@ function tickAgents(now) {
       }
       audio.chime();
       const a = AGENTS.find(x => x.id === agentId);
-      // Tick the "this morning" outputs based on what this agent produces
+      // Tick the "this morning" outputs and pop a celebratory tile per output kind
       const produced = PRODUCES[agentId];
       if (produced) {
+        let idx = 0;
         for (const [k, v] of Object.entries(produced)) {
           state.outputs[k] = (state.outputs[k] || 0) + v;
+          popArtifact(agentId, k, v, idx * 550);
+          idx++;
         }
       }
       appendLine(`<span class="text-emerald-300">✓</span> <span class="text-slate-400">[${new Date().toTimeString().slice(0,8)}]</span> <span class="text-amber-300">${a.short}</span> complete`);
